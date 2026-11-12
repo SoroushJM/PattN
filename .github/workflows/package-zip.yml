@@ -23,10 +23,10 @@ permissions:
 
 jobs:
   package:
-    name: package x64 arm64
+    name: package ${{ matrix.arch }}
     strategy:
       matrix:
-        arch: [ x64, arm64 ]
+        arch: ${{ fromJSON((inputs.target == 'windows' || inputs.target == 'windows-desktop') && '["x64"]' || '["x64","arm64"]') }}
     runs-on: ubuntu-latest
     env:
       Target: |- 
@@ -141,11 +141,11 @@ jobs:
         if-no-files-found: error
 
   release:
-    name: sign and upload zip x64 arm64
+    name: sign and upload zip ${{ matrix.arch }}
     needs: package
     strategy:
       matrix:
-        arch: [ x64, arm64 ]
+        arch: ${{ fromJSON((inputs.target == 'windows' || inputs.target == 'windows-desktop') && '["x64"]' || '["x64","arm64"]') }}
     uses: ./.github/workflows/upload-sign.yml
     with:
       release_tag: ${{ inputs.release_tag }}

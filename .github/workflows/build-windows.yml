@@ -1,4 +1,4 @@
-name: release Windows
+name: release Windows x64 (self-contained)
 
 on:
   workflow_dispatch:

@@ -21,10 +21,10 @@ on:
 
 jobs:
   build:
-    name: build x64 arm64
+    name: build ${{ matrix.arch }}
     strategy:
       matrix:
-        arch: [ x64, arm64 ]
+        arch: ${{ fromJSON(inputs.target == 'windows' && '["x64"]' || '["x64","arm64"]') }}
     runs-on: |-
       ${{
         case(
