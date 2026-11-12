@@ -1332,7 +1332,8 @@ public static class ConfigHandler
             return new Tuple<int, int>(0, 0);
         }
 
-        List<ProfileItem> lstKeep = [];
+        var identities = new HashSet<string>(StringComparer.Ordinal);
+        var keptCount = 0;
         List<ProfileItem> lstRemove = [];
         if (!config.GuiItem.KeepOlderDedupl)
         {
@@ -1343,22 +1344,22 @@ public static class ConfigHandler
         {
             if (item.IsComplex())
             {
-                lstKeep.Add(item);
+                keptCount++;
                 continue;
             }
 
-            if (lstKeep.Exists(i => CompareProfileItem(i, item, false)))
+            if (!identities.Add(ProfileDeduplication.Identity(config, item)))
             {
                 lstRemove.Add(item);
             }
             else
             {
-                lstKeep.Add(item);
+                keptCount++;
             }
         }
         await RemoveServers(config, lstRemove);
 
-        return new Tuple<int, int>(lstProfile.Count, lstKeep.Count);
+        return new Tuple<int, int>(lstProfile.Count, keptCount);
     }
 
     /// <summary>
